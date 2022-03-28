@@ -1,6 +1,9 @@
 import requests as r
 import json
 import pytest
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 # get data from the url
 def get_data(url):
@@ -8,10 +11,11 @@ def get_data(url):
         response = r.get(url)
         data = json.loads(response.text)
     except:
-        print("Error: unable to fetch data")
+        logging.error("Error: cannot get data from the url")
 
     return data
 
+# filter the products that should be shown
 def shouldShowItem(item):
     return (not item['hidden']) and (not item['deleted'])
 
@@ -22,9 +26,8 @@ def get_product_list(data):
     brand_name = []
     product_name = []
     product_price = []
-    # for p in products['products']:
     product = [x for x in filter(shouldShowItem, products['products'])]
-        # if p['hidden'] == False or p['deleted'] == False:
+        
     for p in product:
         brand_name.append(p['brand_name'])
         product_name.append(p['product_name'])
@@ -79,13 +82,13 @@ def main():
     unique_products = get_unique_products(product_name)
     avg = get_average_price(product_price)
     count = 0
-    print("The list of products sorted by price:")
+    print("The list of products sorted by price: ")
     for p in product_list:
-        print(p)
+        logging.info(p)
    
-    print("The total number of unique products: {}".format(len(product_list)))
-    print("The total number of unique brands: {}".format(len(unique_brands)))
-    print("The average price of products: {}".format(avg))
+    logging.info("The total number of unique products: {}".format(len(product_list)))
+    logging.info("The total number of unique brands: {}".format(len(unique_brands)))
+    logging.info("The average price of products: {}".format(avg))
 
 # run the test
 main()
